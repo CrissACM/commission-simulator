@@ -1,13 +1,8 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
-
-interface FormInputs {
-  capital: number;
-  duration: "3" | "6" | "9" | "12";
-  benefitType: "simple" | "compounded";
-}
+import type { FormData } from "../interfaces";
 
 interface SimulationFormProps {
-  onSimulate: (data: FormInputs) => void;
+  onSimulate: (data: FormData) => void;
 }
 
 export function SimulationForm({ onSimulate }: SimulationFormProps) {
@@ -15,9 +10,9 @@ export function SimulationForm({ onSimulate }: SimulationFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormInputs>();
+  } = useForm<FormData>();
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     onSimulate(data);
   };
 
@@ -62,17 +57,17 @@ export function SimulationForm({ onSimulate }: SimulationFormProps) {
               <input
                 type="radio"
                 value={duration}
-                {...register("duration", {
+                {...register("months", {
                   required: "Seleccione una duración",
                 })}
-                className="appearance-none text-blue-500"
+                className=" text-blue-500"
               />
               <span className="ml-2">{duration} meses</span>
             </label>
           ))}
         </div>
-        {errors.duration && (
-          <p className="text-red-500 text-sm mt-1">{errors.duration.message}</p>
+        {errors.months && (
+          <p className="text-red-500 text-sm mt-1">{errors.months.message}</p>
         )}
       </div>
 

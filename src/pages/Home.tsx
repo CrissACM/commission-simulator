@@ -1,37 +1,30 @@
-// src/pages/Home.tsx
-
 import { useState } from "react";
 import {
   PaymentModal,
   QRCodeComponent,
   ResultsTable,
   SimulationForm,
-  SimulationResult,
+  type PaymentData,
+  type SimulationResult,
 } from "../components";
-import {
-  calculateSimulation,
-  checkPaymentStatus,
-  createPayment,
-} from "../utils";
-
-// Reutilizamos la misma interfaz del formulario
-interface FormInputs {
-  capital: number;
-  duration: "3" | "6" | "9" | "12";
-  benefitType: "simple" | "compounded";
-}
+import { useSimulation } from "../hooks/useSimulation";
+import type { FormData } from "../interfaces";
+import { calculateCommission, createPayment } from "../utils";
 
 export function Home() {
   const [results, setResults] = useState<SimulationResult[]>([]);
   const [qrValue, setQrValue] = useState<string>("");
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState<boolean>(false);
-  const [paymentData, setPaymentData] = useState<any>(null); // Puedes definir una interfaz específica para el PaymentData
 
-  // Maneja la simulación utilizando el formulario
-  const handleSimulate = (data: FormInputs) => {
-    // Define el porcentaje mensual en base a la duración seleccionada
+  const { handleCheckPayment, closeModal } = useSimulation();
+
+  // Función para simular la evolución de la inversión
+  const handleSimulate = (data: FormData) => {
+    const { months } = data;
+
     let monthlyRate: number;
-    switch (data.duration) {
+    switch (months) {
       case "3":
         monthlyRate = 1;
         break;
@@ -45,15 +38,14 @@ export function Home() {
         monthlyRate = 4;
         break;
       default:
-        monthlyRate = 1;
+        throw new Error("Invalid months");
     }
-    // Ejecuta el cálculo de la simulación
-    const simulation = calculateSimulation(
-      data.capital,
-      parseInt(data.duration),
+
+    const simulation = calculateCommission({
+      ...data,
       monthlyRate,
-      data.benefitType,
-    );
+    });
+
     setResults(simulation);
   };
 
@@ -62,35 +54,19 @@ export function Home() {
     if (results.length === 0) return;
 
     try {
-      // Usamos el capital inicial (o el último cálculo, según la lógica del negocio)
-      const paymentResponse = await createPayment(results[0].startingCapital);
-      setQrValue(paymentResponse.data.address); // Usamos la address recibida para el QR
-      setPaymentData(paymentResponse.data);
-      setPaymentModalOpen(true);
+      const paymentResponse = await createPayment({
+        fundsGoal: results[0].startingCapital,
+      });
+
+      setQrValue(paymentResponse.data);
+      setPaymentData(paymentResponse);
+      // setPaymentModalOpen(true);
     } catch (error) {
       console.error("Error creando el pago", error);
     }
   };
 
-  // Función para revisar el estado del pago
-  const handleCheckPayment = async () => {
-    if (paymentData && paymentData.address) {
-      try {
-        const statusResponse = await checkPaymentStatus(paymentData.address);
-        // Actualizamos la información del pago y mostramos mensaje si se recibió dinero
-        setPaymentData(statusResponse.data);
-        if (statusResponse.data.amountCaptured > 0) {
-          alert("¡Pago recibido!");
-        } else {
-          alert("Pago pendiente.");
-        }
-      } catch (error) {
-        console.error("Error revisando el pago", error);
-      }
-    }
-  };
-
-  // Reinicia la simulación y limpia estados
+  // Función para reiniciar la simulación
   const handleReset = () => {
     setResults([]);
     setQrValue("");
@@ -135,7 +111,7 @@ export function Home() {
       {paymentModalOpen && (
         <PaymentModal
           isOpen={paymentModalOpen}
-          onClose={() => setPaymentModalOpen(false)}
+          onClose={() => closeModal()}
           paymentData={paymentData}
         />
       )}
@@ -143,7 +119,7 @@ export function Home() {
       {/* Opcional: muestra el QR de pago */}
       {qrValue && (
         <div className="mt-4 flex flex-col items-center">
-          <QRCodeComponent value={qrValue} />
+          <QRCodeComponent QRData={qrValue} />
         </div>
       )}
     </div>

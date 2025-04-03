@@ -1,3 +1,5 @@
+import { currencyFormatter } from "../utils/currencyFormatter";
+
 export interface SimulationResult {
   month: number;
   startingCapital: number;
@@ -22,7 +24,7 @@ export function ResultsTable({ results }: ResultsTableProps) {
 
   return (
     <div className="overflow-x-auto mt-4">
-      <table className="min-w-full bg-zinc-700 border border-gray-200">
+      <table className="max-w-[80%] w-full mx-auto bg-zinc-700 rounded-lg border-gray-200">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Mes</th>
@@ -35,17 +37,32 @@ export function ResultsTable({ results }: ResultsTableProps) {
         </thead>
         <tbody>
           {results.map((row) => (
-            <tr key={row.month} className="text-center">
-              <td className="py-2 px-4 border-b">{row.month}</td>
-              <td className="py-2 px-4 border-b">
-                {row.startingCapital.toFixed(2)}
+            <tr key={row.month} className="text-center not-last:border-b">
+              <td className="py-2 px-4">{row.month}</td>
+              <td className="py-2 px-4">
+                {currencyFormatter({
+                  currency: "USD",
+                  value: row.startingCapital,
+                })}
               </td>
-              <td className="py-2 px-4 border-b">{row.interest.toFixed(2)}</td>
-              <td className="py-2 px-4 border-b">
-                {row.accumulatedCapital.toFixed(2)}
+              <td className="py-2 px-4">
+                {currencyFormatter({
+                  currency: "USD",
+                  value: row.interest,
+                })}
               </td>
-              <td className="py-2 px-4 border-b">{row.fee.toFixed(2)}</td>
-              <td className="py-2 px-4 border-b">{row.netResult.toFixed(2)}</td>
+              <td className="py-2 px-4">
+                {currencyFormatter({
+                  currency: "USD",
+                  value: row.accumulatedCapital,
+                })}
+              </td>
+              <td className="py-2 px-4">
+                {currencyFormatter({ currency: "USD", value: row.fee })}
+              </td>
+              <td className="py-2 px-4">
+                {currencyFormatter({ currency: "USD", value: row.netResult })}
+              </td>
             </tr>
           ))}
         </tbody>
