@@ -11,7 +11,7 @@ export async function createPayment({
   const response = await disruptiveApi.post("/payments/single", {
     network: "BSC",
     fundsGoal,
-    smartContractAddress: "0x7cDb78AD26670D5bc4A35504b0e5127909D4B35b",
+    smartContractAddress: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
   });
 
   return response.data;
