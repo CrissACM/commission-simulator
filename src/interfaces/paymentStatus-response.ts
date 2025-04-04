@@ -1,11 +1,11 @@
 export interface PaymentStatusResponse {
-  data: PaymentData;
+  data: PaymentStatusData;
   timeStart: number;
   timeEnd: number;
   timeDelta: number;
 }
 
-export interface PaymentData {
+export interface PaymentStatusData {
   network: string;
   address: string;
   amountCaptured?: number;

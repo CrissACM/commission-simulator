@@ -1,9 +1,9 @@
-import type { PaymentData } from "../interfaces";
+import type { PaymentStatusData } from "../interfaces";
 
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  paymentData: PaymentData | null;
+  paymentData: PaymentStatusData | null;
 }
 
 export function PaymentModal({

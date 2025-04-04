@@ -1,54 +1,61 @@
-# React + TypeScript + Vite
+# Simulador de Comisiones
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es una aplicación React + TypeScript + Vite que permite simular comisiones basadas en un capital inicial y un rango de tiempo.
 
-Currently, two official plugins are available:
+## Requisitos previos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Asegúrate de tener instalados los siguientes programas:
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) (versión 16 o superior)
+- [npm](https://www.npmjs.com/) o [yarn](https://yarnpkg.com/)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Instalación
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. Clona este repositorio:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   ```bash
+   git clone https://github.com/tu-usuario/simulador-comisiones.git
+   cd simulador-comisiones
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. Instala las dependencias:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+   ```bash
+   npm install
+   ```
+
+   O si usas `yarn`:
+
+   ```bash
+   yarn install
+   ```
+
+## Configuración
+
+1. Crea un archivo `.env` en la raíz del proyecto basado en el archivo `.env.template`:
+
+   ```bash
+   cp .env.template .env
+   ```
+
+2. Llena las variables de entorno en el archivo `.env` según sea necesario.
+
+## Scripts disponibles
+
+En el directorio del proyecto, puedes ejecutar los siguientes comandos:
+
+### `npm run dev`
+
+Inicia el servidor de desarrollo. Abre [http://localhost:5173](http://localhost:5173) para verlo en tu navegador.
+
+### `npm run build`
+
+Construye la aplicación para producción en la carpeta `dist`.
+
+### `npm run preview`
+
+Sirve la aplicación construida localmente para verificarla antes de desplegarla.
+
+### `npm run lint`
+
+Ejecuta ESLint para analizar el código en busca de errores y problemas de estilo.

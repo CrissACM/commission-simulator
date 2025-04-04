@@ -1,13 +1,14 @@
 export interface CreatePaymentResponse {
-  data: Data;
+  data: CreatePaymentData;
   timeStart: number;
   timeEnd: number;
   timeDelta: number;
 }
 
-export interface Data {
+export interface CreatePaymentData {
   address: string;
   network: string;
   fundsGoal: number;
+  smartContractAddress: string;
   accounts: string[];
 }

@@ -22,5 +22,14 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "test/components/Header.test.tsx",
+    "test/components/Loading.test.tsx",
+    "test/components/PaymentModal.test.tsx",
+    "test/components/QRCodeComponent.test.tsx",
+    "test/components/ResultsTable.test.tsx",
+    "test/components/SimulationForm.test.tsx",
+    "test/**/*.test.tsx"
+  ]
 }
