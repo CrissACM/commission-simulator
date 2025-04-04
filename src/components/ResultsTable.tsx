@@ -1,19 +1,11 @@
+import type { SimulationResult } from "../interfaces";
 import { currencyFormatter } from "../utils/currencyFormatter";
 
-export interface SimulationResult {
-  month: number;
-  startingCapital: number;
-  interest: number;
-  accumulatedCapital: number;
-  fee: number;
-  netResult: number;
-}
-
-interface ResultsTableProps {
+interface Props {
   results: SimulationResult[];
 }
 
-export function ResultsTable({ results }: ResultsTableProps) {
+export function ResultsTable({ results }: Props) {
   if (!results || results.length === 0) {
     return (
       <p className="text-center text-gray-500 mt-4">
@@ -24,7 +16,7 @@ export function ResultsTable({ results }: ResultsTableProps) {
 
   return (
     <div className="overflow-x-auto mt-4">
-      <table className="max-w-[80%] w-full mx-auto bg-zinc-700 rounded-lg border-gray-200">
+      <table className="max-w-[70%] w-full mx-auto bg-zinc-700 rounded-lg border-gray-200">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Mes</th>

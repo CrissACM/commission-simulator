@@ -1,13 +1,4 @@
-export interface PaymentData {
-  network: string;
-  address: string;
-  amountCaptured: number;
-  smartContractAddress: string;
-  smartContractSymbol: string;
-  status: string;
-  fundsGoal: number;
-  // Puedes agregar otros campos que necesites
-}
+import type { PaymentData } from "../interfaces";
 
 interface PaymentModalProps {
   isOpen: boolean;

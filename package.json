@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.1",
+    "@tanstack/react-table": "^8.21.2",
+    "@types/react-csv": "^1.1.10",
     "axios": "^1.8.4",
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "react": "^19.0.0",
+    "react-csv": "^2.2.2",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-qr-code": "^2.0.15",

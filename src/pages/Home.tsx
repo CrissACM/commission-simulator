@@ -1,23 +1,24 @@
 import { useState } from "react";
+import { CSVLink } from "react-csv";
 import {
   PaymentModal,
   QRCodeComponent,
   ResultsTable,
   SimulationForm,
-  type PaymentData,
-  type SimulationResult,
 } from "../components";
-import { useSimulation } from "../hooks/useSimulation";
-import type { FormData } from "../interfaces";
-import { calculateCommission, createPayment } from "../utils";
+import type { FormData, PaymentData, SimulationResult } from "../interfaces";
+import {
+  calculateCommission,
+  checkPaymentStatus,
+  createPayment,
+  currencyFormatter,
+} from "../utils";
 
 export function Home() {
   const [results, setResults] = useState<SimulationResult[]>([]);
   const [qrValue, setQrValue] = useState<string>("");
   const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState<boolean>(false);
-
-  const { handleCheckPayment, closeModal } = useSimulation();
 
   // Función para simular la evolución de la inversión
   const handleSimulate = (data: FormData) => {
@@ -58,12 +59,37 @@ export function Home() {
         fundsGoal: results[0].startingCapital,
       });
 
-      setQrValue(paymentResponse.data);
-      setPaymentData(paymentResponse);
-      // setPaymentModalOpen(true);
+      const { address, network } = paymentResponse.data;
+
+      setQrValue(address);
+      setPaymentData({ address, network });
     } catch (error) {
       console.error("Error creando el pago", error);
     }
+  };
+
+  const handleCheckPayment = async () => {
+    if (!paymentData?.status && paymentData?.address) {
+      try {
+        const statusResponse = await checkPaymentStatus({
+          address: paymentData.address,
+          network: paymentData.network,
+        });
+
+        setPaymentData(statusResponse.data);
+
+        if (statusResponse.data.amountCaptured! > 0) alert("¡Pago recibido!");
+      } catch (error) {
+        console.error("Error revisando el pago", error);
+      }
+    }
+
+    setPaymentModalOpen(true);
+  };
+
+  // Función para cerrar el modal sin reiniciar otros estados
+  const closeModal = () => {
+    setPaymentModalOpen(false);
   };
 
   // Función para reiniciar la simulación
@@ -73,6 +99,21 @@ export function Home() {
     setPaymentData(null);
     setPaymentModalOpen(false);
   };
+
+  const csvData = results.map((row) => ({
+    month: row.month,
+    startingCapital: currencyFormatter({
+      currency: "USD",
+      value: row.startingCapital,
+    }),
+    interest: currencyFormatter({ currency: "USD", value: row.interest }),
+    accumulatedCapital: currencyFormatter({
+      currency: "USD",
+      value: row.accumulatedCapital,
+    }),
+    fee: currencyFormatter({ currency: "USD", value: row.fee }),
+    netResult: currencyFormatter({ currency: "USD", value: row.netResult }),
+  }));
 
   return (
     <div className="container mx-auto p-4">
@@ -84,6 +125,7 @@ export function Home() {
       {results.length > 0 && (
         <>
           <ResultsTable results={results} />
+
           <div className="flex justify-center mt-4 space-x-4">
             <button
               onClick={handleCreatePayment}
@@ -91,6 +133,31 @@ export function Home() {
             >
               DEPOSITAR AHORA
             </button>
+            <CSVLink
+              data={csvData}
+              filename="simulacion.csv"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Exportar CSV
+            </CSVLink>
+          </div>
+        </>
+      )}
+
+      {/* Muestra el modal de pago si está abierto */}
+      {paymentModalOpen && (
+        <PaymentModal
+          isOpen={paymentModalOpen}
+          onClose={closeModal}
+          paymentData={paymentData}
+        />
+      )}
+
+      {/* Opcional: muestra el QR de pago */}
+      {qrValue && (
+        <>
+          <QRCodeComponent value={qrValue} />
+          <div className="flex justify-center mt-4 space-x-4">
             <button
               onClick={handleCheckPayment}
               className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
@@ -105,22 +172,6 @@ export function Home() {
             </button>
           </div>
         </>
-      )}
-
-      {/* Muestra el modal de pago si está abierto */}
-      {paymentModalOpen && (
-        <PaymentModal
-          isOpen={paymentModalOpen}
-          onClose={() => closeModal()}
-          paymentData={paymentData}
-        />
-      )}
-
-      {/* Opcional: muestra el QR de pago */}
-      {qrValue && (
-        <div className="mt-4 flex flex-col items-center">
-          <QRCodeComponent QRData={qrValue} />
-        </div>
       )}
     </div>
   );

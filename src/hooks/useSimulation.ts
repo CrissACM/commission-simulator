@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import type { PaymentData } from "../components";
 import { SimulationResult } from "../components/ResultsTable";
-import { checkPaymentStatus } from "../utils/api";
+import { checkPaymentStatus } from "../utils/createPayment";
 
 export const useSimulation = () => {
   const [results, setResults] = useState<SimulationResult[]>([]);
